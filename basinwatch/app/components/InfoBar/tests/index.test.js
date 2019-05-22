@@ -1,6 +1,6 @@
 /**
  *
- * Tests for Map
+ * Tests for InfoBar
  *
  * @see https://github.com/react-boilerplate/react-boilerplate/tree/master/docs/testing
  *
@@ -10,13 +10,12 @@ import React from 'react';
 import { render } from 'react-testing-library';
 // import 'jest-dom/extend-expect'; // add some helpful assertions
 
-import { Map } from '../index';
+import InfoBar from '../index';
 
-describe('<Map />', () => {
+describe('<InfoBar />', () => {
   it('Expect to not log errors in console', () => {
     const spy = jest.spyOn(global.console, 'error');
-    const dispatch = jest.fn();
-    render(<Map dispatch={dispatch} />);
+    render(<InfoBar />);
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -32,7 +31,7 @@ describe('<Map />', () => {
   it.skip('Should render and match the snapshot', () => {
     const {
       container: { firstChild },
-    } = render(<Map />);
+    } = render(<InfoBar />);
     expect(firstChild).toMatchSnapshot();
   });
 });

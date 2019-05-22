@@ -17,9 +17,9 @@ import GlobalStyle from '../../global-styles';
 
 export default function App() {
   return (
-    <div>
+    <div style={{'height': '100%'}}>
       <Switch>
-        <Route exact path="/" component={Map} />
+        <Route exact path="/" component={HomePage} />
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />
