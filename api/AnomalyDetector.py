@@ -119,7 +119,7 @@ class AnomalyDetector:
         numItems = table.item_count
 
         if numItems > 0:
-            sites = [i['site'] for i in t.scan()['Items']]
+            sites = [i['site'] for i in table.scan()['Items']]
             with table.batch_writer() as bw:
                 for s in sites:
                     bw.delete_item(Key = {'site': s})
