@@ -21,10 +21,20 @@ const Wrapper = styled.div`
 function WatershedStats(props){
   console.log(props)
     if (props.watershed){
+
+      if(props.gages){
+        var gagenames = props.gages.map((e) => {
+          return <li>{e.properties.STANAME}</li>
+        })
+      }
+
       return(
         <div>
           <h2>Watershed: {props.watershed.Name}</h2>
           <h2>Num Gages: {props.gages.length}</h2>
+          <list>
+          {gagenames}
+          </list>
         </div>
       );
     }

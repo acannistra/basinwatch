@@ -8,12 +8,14 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'IBM Plex Serif', serif;
     height: 100vh;
   }
 
   body.fontLoaded {
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700|IBM+Plex+Serif:400,400i&display=swap');
+    font-family: 'IBM Plex Serif', serif;
+    font-family: 'IBM Plex Sans', sans-serif;
   }
 
   #app {

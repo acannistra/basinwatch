@@ -13,8 +13,22 @@ import {bbox, bboxPolygon} from '@turf/turf'
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWNhbm5pc3RyYSIsImEiOiJLWVM2RWhJIn0.TputXxRYBUPh-vjDg6_TFA';
 
+function getUnique(arr){
+  let set = new Set();
+  return arr.map((v, index) => {
+     if(set.has(v.id)) {
+         return false
+     } else {
+         set.add(v.id);
+         console.log("added" + v.id)
+         return index.toString();
+     }
+   }).filter(e=>e).map(e=>arr[parseInt(e)]);
+}
+
 class Map extends Component {
   watershedClickHandler;
+  reset;
 
   constructor(props) {
     super(props);
@@ -24,7 +38,7 @@ class Map extends Component {
   }
 
   componentDidUpdate(){
-    console.log(this.map.getBounds())
+
   }
 
   componentDidMount(){
@@ -46,14 +60,12 @@ class Map extends Component {
       for (var layer of layers) {
         this.map.addLayer(layer)
       }
-
       console.log("loaded!")
-      // this.setBounds()
-
     });
 
 
     var hoveredStateId = null;
+
     this.map.on("mousemove", 'wbds-transparent', (e) => {
       if (e.features.length > 0) {
         if (hoveredStateId) {
@@ -69,7 +81,7 @@ class Map extends Component {
         }
         hoveredStateId =  null;
     })
-    this.map.on('mousedown', 'wbds-transparent', (e) => {
+    this.map.on('click', 'wbds-transparent', (e) => {
       console.log(e.features)
       var bounds = bbox(e.features[0])
       console.log(bboxPolygon(bounds))
@@ -85,14 +97,12 @@ class Map extends Component {
       var gages = this.map.querySourceFeatures('gages', {
       filter: ['==', 'HUC6', e.features[0].properties.HUC6]
       });
+      gages = getUnique(gages)
 
       this.props.watershedClickHandler({
         watershed: e.features[0].properties,
         gages: gages
       })
-
-      console.log(gages)
-
     })
 
   }

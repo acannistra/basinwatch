@@ -117,6 +117,29 @@ layers = [
     }
   },
   {
+    "id": 'gage-labels',
+    "source": "gages",
+    "type": 'symbol',
+    "layout": {
+      'text-field': ['get', 'STANAME'],
+      'text-size' : 10,
+      'text-offset' : [0, 2.5]
+    },
+    'paint' : {
+      'text-color': 'white',
+      'text-halo-color' : '#A8A8A8',
+      'text-halo-width': 0.4,
+      "text-opacity": [
+        "step", ["zoom"],
+        0,
+        4, 0,
+        7.5, 0.4,
+        10, 0.8
+      ],
+    },
+
+  },
+  {
       "id": "point1",
       "source": "gages",
       "type": "circle",
