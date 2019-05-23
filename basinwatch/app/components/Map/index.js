@@ -13,6 +13,10 @@ import {bbox, bboxPolygon} from '@turf/turf'
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWNhbm5pc3RyYSIsImEiOiJLWVM2RWhJIn0.TputXxRYBUPh-vjDg6_TFA';
 
+const gageDataUrl = "https://files.t11a.me/file/t11a-xyz/gages_WBD14-15-1557885435.geojson"
+
+const anomalies = "https://p282obduy0.execute-api.us-west-2.amazonaws.com/dev/anomalies"
+
 function getUnique(arr){
   let set = new Set();
   return arr.map((v, index) => {
@@ -68,10 +72,10 @@ class Map extends Component {
 
 
 
-    fetch("https://files.t11a.me/file/t11a-xyz/gages_WBD14-15-1557885435.geojson")
+    fetch(gageDataUrl)
       .then(res => res.json())
       .then(gages => {
-        fetch("http://localhost:5000/anomalies")
+        fetch(anomalies)
           .then(res => res.json())
           .then(anoms => {
             console.log(anoms)

@@ -89,11 +89,16 @@
     "react-intl": "2.8.0",
     "react-redux": "7.0.2",
     "react-router-dom": "5.0.0",
+    "react-vega": "^6.0.1",
+    "react-vega-lite": "^6.0.1",
     "redux": "4.0.1",
     "redux-saga": "1.0.2",
     "reselect": "4.0.0",
     "sanitize.css": "8.0.0",
-    "styled-components": "4.2.0"
+    "styled-components": "4.2.0",
+    "vega": "^5.4.0",
+    "vega-embed": "^4.2.0",
+    "vega-lite": "^3.2.1"
   },
   "devDependencies": {
     "@babel/cli": "7.4.3",
