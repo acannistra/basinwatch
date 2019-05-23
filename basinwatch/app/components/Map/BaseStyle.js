@@ -97,25 +97,25 @@ layers = [
 
     }
   },
-  {
-    "id": "point",
-    "source": 'gages',
-    "type": "circle",
-    "paint": {
-        "circle-radius": initialRadius,
-        "circle-radius-transition": {duration: 0},
-        "circle-opacity-transition": {duration: 0},
-        "circle-color": [
-          'interpolate',
-          ['linear'],
-          ['get', 'DRAIN_SQKM'],
-          0, 'white',
-          30000, 'blue'
-        ]
-
-
-    }
-  },
+  // {
+  //   "id": "gagecircles",
+  //   "source": 'gages',
+  //   "type": "circle",
+  //   "paint": {
+  //       "circle-radius": initialRadius,
+  //       "circle-radius-transition": {duration: 0},
+  //       "circle-opacity-transition": {duration: 0},
+  //       "circle-color": [
+  //         'interpolate',
+  //         ['linear'],
+  //         ['get', 'anomaly', ['object', ['get', 'anomaly']]],
+  //         100, 'white',
+  //         200, 'blue'
+  //       ]
+  //
+  //
+  //   }
+  // },
   {
     "id": 'gage-labels',
     "source": "gages",
@@ -148,9 +148,11 @@ layers = [
           "circle-color": [
             'interpolate',
             ['linear'],
-            ['get', 'DRAIN_SQKM'],
-            0, 'lightgreen',
-            30000, 'darkgreen'
+            ['get', 'anomaly', ['object', ['get', 'anomaly']]],
+            0, 'maroon',
+            50, 'orangered',
+            100, 'white',
+            200, 'darkgreen'
           ]
       }
   },

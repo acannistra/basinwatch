@@ -30,10 +30,12 @@ class Map extends Component {
   watershedClickHandler;
   reset;
 
+
   constructor(props) {
     super(props);
     this.state = {
-      activeBounds:  new mapboxgl.LngLatBounds([-115.75,29.69],[-103.5,43.39])
+      activeBounds:  new mapboxgl.LngLatBounds([-115.75,29.69],[-103.5,43.39]),
+      updatedGages: null
     };
   }
 
@@ -42,6 +44,7 @@ class Map extends Component {
   }
 
   componentDidMount(){
+    var gageData = null;
 
     this.map = new mapboxgl.Map({
       container: 'test',
@@ -63,6 +66,28 @@ class Map extends Component {
       console.log("loaded!")
     });
 
+
+
+    fetch("https://files.t11a.me/file/t11a-xyz/gages_WBD14-15-1557885435.geojson")
+      .then(res => res.json())
+      .then(gages => {
+        fetch("http://localhost:5000/anomalies")
+          .then(res => res.json())
+          .then(anoms => {
+            console.log(anoms)
+            for (var gage of gages['features']){
+              gage['properties']['anomaly'] = anoms[gage['properties']['STAID']]
+            }
+            gageData = gages
+            this.setState({
+              updatedGages : gageData
+            })
+          })
+    })
+
+    this.map.on('sourcedata', (e) => {
+      this.map.getSource('gages').setData(this.state.updatedGages)
+    })
 
     var hoveredStateId = null;
 
@@ -103,6 +128,7 @@ class Map extends Component {
         watershed: e.features[0].properties,
         gages: gages
       })
+
     })
 
   }
