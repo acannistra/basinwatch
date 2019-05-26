@@ -6,9 +6,31 @@
 
 import React, {Component} from 'react';
 import {createClassFromLiteSpec} from 'react-vega-lite';
+import Table from '@material-ui/core/Table';
+import { makeStyles } from '@material-ui/core/styles';
+
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+
 
 // import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing(9),
+    overflowX: 'auto',
+  },
+  table: {
+    minWidth: 650,
+  },
+}));
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -21,8 +43,9 @@ const Wrapper = styled.div`
 `;
 
 
-
 function WatershedStats(props){
+  const classes = useStyles();
+
   console.log(props)
     if (props.watershed){
 
@@ -31,12 +54,12 @@ function WatershedStats(props){
           var an = JSON.parse(e.properties.anomaly)
 
           return (
-            <tr>
-              <td>{e.properties.STANAME.toLowerCase()}</td>
-              <td>{an.current} cfs</td>
-              <td>{an.median} cfs</td>
-              <td>{an.anomaly}%</td>
-            </tr>
+            <TableRow key={e.properties.STANAME}>
+              <TableCell>{e.properties.STANAME.toLowerCase()}</TableCell>
+              <TableCell>{an.current} cfs</TableCell>
+              <TableCell>{an.median} cfs</TableCell>
+              <TableCell>{an.anomaly}%</TableCell>
+            </TableRow>
           )
         })
       }
@@ -45,15 +68,21 @@ function WatershedStats(props){
         <div>
           <h2>Watershed: {props.watershed.Name}</h2>
           <h2>Num Gages: {props.gages.length}</h2>
-          <table>
-            <tr>
-              <th>Gage</th>
-              <th>Current Flow</th>
-              <th>Median</th>
-              <th>Anomaly</th>
-            </tr>
-          {gagenames}
-          </table>
+          <Paper className={classes.root}>
+            <Table className={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Station</TableCell>
+                  <TableCell >Current Flow</TableCell>
+                  <TableCell >Median</TableCell>
+                  <TableCell >Anomaly</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {gagenames}
+              </TableBody>
+            </Table>
+          </Paper>
         </div>
       );
     }
@@ -63,12 +92,13 @@ function WatershedStats(props){
 class InfoBar extends Component {
   watershed;
   gages;
+  loading;
 
 
   render() {
     return(
       <Wrapper>
-        <h1>BasinWatch</h1>
+
         <WatershedStats watershed = {this.props.watershed} gages = {this.props.gages}/>
       </Wrapper>
     );

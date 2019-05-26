@@ -32,7 +32,7 @@ function getUnique(arr){
 
 class Map extends Component {
   watershedClickHandler;
-  reset;
+  finishedLoading;
 
 
   constructor(props) {
@@ -90,8 +90,12 @@ class Map extends Component {
     })
 
     this.map.on('sourcedata', (e) => {
-      this.map.getSource('gages').setData(this.state.updatedGages)
+      this.map.getSource('gages').setData(this.state.updatedGages);
+      if (this.map.isSourceLoaded('gages')){
+        this.props.finishedLoading();
+      }
     })
+
 
     var hoveredStateId = null;
 
