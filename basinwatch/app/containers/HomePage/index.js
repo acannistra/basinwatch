@@ -51,6 +51,7 @@ class HomePage extends Component {
     }
     this.selectWatershed = this.selectWatershed.bind(this)
     this.finishedLoading = this.finishedLoading.bind(this)
+    this.zoomToWatershed = this.zoomToWatershed.bind(this)
   }
 
   finishedLoading(){
@@ -59,8 +60,15 @@ class HomePage extends Component {
     });
   }
 
+  zoomToWatershed(){
+    this.setState({
+      zoomToWatershed: this.state.selectedWatershed
+    })
+  }
+
   selectWatershed(update) {
     this.setState({
+      zoomToWatershed: null,
       selectedWatershed: update.watershed,
       selectedGages: update.gages,
       loading: false
@@ -69,15 +77,16 @@ class HomePage extends Component {
 
   render() {
 
-
+    console.log(this.state.zoomToWatershed)
     return (
       <Grid container component="main" classname={styles.root}>
         <CssBaseline/>
         <Grid xs={12}>
-          <InfoBar watershed={this.state.selectedWatershed} gages={this.state.selectedGages} loading={this.state.loading}/>
+          <InfoBar watershed={this.state.selectedWatershed} gages={this.state.selectedGages} loading={this.state.loading} zoomToWatershedHandler={this.zoomToWatershed}/>
         </Grid>
         <Grid xs={12}>
-          <Map watershedClickHandler={this.selectWatershed} finishedLoading={this.finishedLoading}/>
+          <Map watershedClickHandler={this.selectWatershed} finishedLoading={this.finishedLoading}
+          focalWatershed={this.state.zoomToWatershed}/>
         </Grid>
       </Grid>
 
