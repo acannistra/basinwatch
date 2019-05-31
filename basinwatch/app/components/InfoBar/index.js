@@ -5,7 +5,6 @@
  */
 
 import React, {Component} from 'react';
-import {createClassFromLiteSpec} from 'react-vega-lite';
 import Table from '@material-ui/core/Table';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -22,6 +21,11 @@ import GaugeChart from 'react-gauge-chart';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import { VictoryChart, VictoryBar} from 'victory';
 
 
 
@@ -46,7 +50,8 @@ const useStyles = makeStyles(theme => ({
     color: 'white'
   },
   card: {
-    minWidth: 150,
+    marginLeft: "2em",
+    marginRight: "2em"
   },
   title: {
     fontSize: 14,
@@ -71,22 +76,53 @@ function WatershedStats(props){
 
   const classes = useStyles();
 
-  console.log(props)
-    if (props.watershed){
-      if(props.gages){
-        var gagenames = props.gages.map((e) => {
-          var an = JSON.parse(e.properties.anomaly)
+  var [activeTab, setValue] = React.useState(0);
 
-          return (
-            <TableRow key={e.properties.STANAME}>
-              <TableCell>{e.properties.STANAME.toLowerCase()}</TableCell>
-              <TableCell>{an.current} cfs</TableCell>
-              <TableCell>{an.median} cfs</TableCell>
-              <TableCell>{an.anomaly}%</TableCell>
-            </TableRow>
-          )
-        })
-      }
+  function handleChange(event, newValue) {
+    setValue(newValue);
+  }
+
+  function numAnomalous(threshold){
+    return (props.gages.filter((g) => {
+      var an = JSON.parse(g.properties.anomaly)
+      return (
+        parseFloat(an.anomaly) >= 100 + threshold ||
+        parseFloat(an.anomaly) <= 100 - threshold
+      )
+    }).length);
+  };
+
+  function flyTo(e){
+    console.log(e)
+  }
+
+  var chartData = props.gages.reduce(function(list, g) {
+    var an = JSON.parse(g.properties.anomaly)
+    if(an.anomaly == "-1") {return (list)}
+    var obj = {}
+    obj["name"] = g.properties.STANAME;
+    obj["anomaly"] = parseFloat(an.anomaly) - 100.0
+    obj['absanomaly'] = Math.abs(obj['anomaly'])
+    return list.concat([obj]);
+  }, []);
+
+  console.log(chartData)
+
+    if (props.watershed){
+      // if(props.gages){
+      //   var gagenames = props.gages.map((e) => {
+      //     var an = JSON.parse(e.properties.anomaly)
+      //
+      //     return (
+      //       <TableRow key={e.properties.STANAME}>
+      //         <TableCell>{e.properties.STANAME.toLowerCase()}</TableCell>
+      //         <TableCell>{an.current} cfs</TableCell>
+      //         <TableCell>{an.median} cfs</TableCell>
+      //         <TableCell>{an.anomaly}%</TableCell>
+      //       </TableRow>
+      //     )
+      //   })
+      // }
 
       return(
         <div>
@@ -103,36 +139,32 @@ function WatershedStats(props){
 
             </Grid>
           </Grid>
-          <Grid container spacing={5} direction="row" className={classes.cardGrid}>
-            {[1,2,3].map( _ => (
+          <Grid container spacing={9} direction="row" className={classes.cardGrid}>
+            {[["Number of Gages", props.gages.length],
+              ["Number of Anomalous Gauges", numAnomalous(20)],
+              ["Percent Anomalous Gauges", (numAnomalous(20) / props.gages.length).toPrecision(3) * 100]
+            ].map( _ => (
               <Grid sm={4}>
                   <Card className={classes.card}>
                     <CardContent>
-                      <Typography variant='h1'>150%</Typography>
+                      <Typography variant='h1'>{_[1]}</Typography>
                     </CardContent>
                     <CardActions>
-                      <Typography variant="button" display="block">Anomalous Gauges</Typography>
+                      <Typography variant='button'>{_[0]}</Typography>
                     </CardActions>
                   </Card>
                 </Grid>
               ))}
 
           </Grid>
-          <Paper className={classes.root}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Station</TableCell>
-                  <TableCell>Current Flow</TableCell>
-                  <TableCell>Median</TableCell>
-                  <TableCell>Anomaly</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {gagenames}
-              </TableBody>
-            </Table>
-          </Paper>
+
+          <Divider light />
+
+          <Grid container className={classes.cardGrid}>
+            <Grid sm={6}>
+              
+            </Grid>
+          </Grid>
         </div>
       )
     }
