@@ -1,12 +1,15 @@
 from flask import Flask
 from flask_cors import CORS
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, send_file
 #from AnomalyRetriever import retrieveAnomaly
 # from AnomalyDetector import AnomalyDetector
 import json
 import boto3
 import decimal
 from datetime import datetime
+from requests import get
+from io import BytesIO
+from urllib.parse import urlencode
 
 app = Flask(__name__)
 CORS(app)
@@ -36,6 +39,14 @@ def anomalies():
     res = {i['site'] : i for i in res}
 
     return (jsonify(res))
+
+@app.route("/NOAA_precip")
+def precip():
+    URLBASE = "https://www.cbrfc.noaa.gov/gmap/gridgeo/gridpng.php?"
+
+    print(URLBASE+urlencode(request.args))
+    f = BytesIO(get(URLBASE+urlencode(request.args)).content)
+    return(send_file(f, mimetype="image/png"))
 #
 #
 # @app.route('/refresh', methods=['POST'])

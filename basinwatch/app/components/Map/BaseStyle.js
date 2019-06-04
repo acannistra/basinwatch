@@ -4,6 +4,11 @@ name = "CO Basin"
 https://api.mapbox.com/styles/v1/mapbox/dark-v9/wmts?access_token=pk.eyJ1IjoiYWNhbm5pc3RyYSIsImEiOiJLWVM2RWhJIn0.TputXxRYBUPh-vjDg6_TFA
 glyphs =  "mapbox://fonts/mapbox/{fontstack}/{range}.pbf"
 
+const _date = new Date()
+const YEAR = _date.getFullYear().toString()
+const MONTH = ("0"+(_date.getMonth()+1)).slice(-2)
+const DAY = ("0" + (_date.getDate())).slice(-2)
+
 sources = {
   'wbd-Source' : {
       'type': 'geojson',
@@ -21,10 +26,69 @@ sources = {
     'type': 'vector',
     'url': 'mapbox://acannistra.6n7tacnh',
   },
+  "NOAA:StreamAnomalyTiles": {
+    "type": "raster",
+    "tiles": [
+      "https://mapservice.nohrsc.noaa.gov/arcgis/rest/services/national_water_model/NWM_Stream_Analysis/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&layers=show: 10,11&layerDefs=&imageSR=3857&format=png&transparent=true&dpi=96&time=&layerTimeOptions=&dynamicLayers=&gdbVersion=&mapScale=&rotation=&datumTransformations=&layerParameterValues=&mapRangeValues=&layerRangeValues=&f=image"
+    ],
+    "tileSize": 256
+  },
+  "NOAA:7DayPrecipTiles" :{
+    "type": "raster",
+    "tiles": [
+      "https://water.weather.gov/ahps/gis.php/wmts/?shape_path="+YEAR+"/"+MONTH+"/"+DAY+"/nws_precip_last7days_observed_"+YEAR+MONTH+DAY+"&service=wmts&request=gettile&version=1.0.0&layer=precip&style=default&tilematrixset=esri-web-mercator&tilematrix={z}&tilerow={y}&tilecol={x}"
+    ],
+    "tileSize": 256
+  },
+  "NOAA:1DayPrecipTiles" :{
+    "type": "raster",
+    "tiles": [
+      "https://water.weather.gov/ahps/gis.php/wmts/?shape_path="+YEAR+"/"+MONTH+"/"+DAY+"/nws_precip_1day_observed_"+YEAR+MONTH+DAY+"&service=wmts&request=gettile&version=1.0.0&layer=precip&style=default&tilematrixset=esri-web-mercator&tilematrix={z}&tilerow={y}&tilecol={x}"
+    ],
+    "tileSize": 256
+  }
 
 }
 
 layers = [
+  {
+    "id": "L:NOAA:7DayPrecip",
+    "source": "NOAA:7DayPrecipTiles",
+    "type": "raster",
+    'layout': {
+      'visibility': 'none'
+    },
+    "paint": {
+      "raster-opacity": [
+        "interpolate", ["linear"], ["zoom"],
+        4, 0.6,
+        7, 0.15
+      ]
+    }
+  },
+  {
+    "id": "L:NOAA:1DayPrecip",
+    "source": "NOAA:1DayPrecipTiles",
+    "type": "raster",
+    'layout': {
+      'visibility': 'none'
+    },
+    "paint": {
+      "raster-opacity": [
+        "interpolate", ["linear"], ["zoom"],
+        4, 0.6,
+        7, 0.15
+      ]
+    }
+  },
+  {
+    "id": "L:NOAA:StreamAnomaly",
+    "source": "NOAA:StreamAnomalyTiles",
+    "type": "raster",
+    'layout': {
+      'visibility': 'none'
+    }
+  },
   {
     'id': 'flowlines',
     'type' : 'line',

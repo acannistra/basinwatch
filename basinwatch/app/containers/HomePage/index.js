@@ -31,12 +31,24 @@ const MainContainer = styled.div`
 const styles = {
   root: {
     height: '100vh',
+    flexGrow: 1
   },
   paper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
+  floatBox: {
+    position: "absolute",
+    top: 0,
+    "border-radius": "25px",
+    left: 0,
+    "margin-left": "35px",
+    background: "rgba(25, 26, 26, 0.7)",
+    width: "35%",
+    height: "85vh",
+    'z-index': "100"
+  }
 };
 
 class HomePage extends Component {
@@ -76,21 +88,19 @@ class HomePage extends Component {
   }
 
   render() {
-
-    console.log(this.state.zoomToWatershed)
-    return (
-      <Grid container component="main" classname={styles.root}>
-        <CssBaseline/>
-        <Grid xs={12}>
+    return(
+      <Grid container>
+        <Grid item xs={4}>
           <InfoBar watershed={this.state.selectedWatershed} gages={this.state.selectedGages} loading={this.state.loading} zoomToWatershedHandler={this.zoomToWatershed}/>
         </Grid>
-        <Grid xs={12}>
-          <Map watershedClickHandler={this.selectWatershed} finishedLoading={this.finishedLoading}
-          focalWatershed={this.state.zoomToWatershed}/>
+        <Grid item xs={8}>
+            <Map watershedClickHandler={this.selectWatershed} finishedLoading={this.finishedLoading}
+            focalWatershed={this.state.zoomToWatershed}/>
         </Grid>
       </Grid>
 
-    );
+    )
+
   };
 }
 

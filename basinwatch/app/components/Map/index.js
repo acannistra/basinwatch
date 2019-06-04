@@ -10,12 +10,17 @@ import styled from 'styled-components';
 import { sources, layers, glyphs}  from './BaseStyle'
 import mapboxgl from 'mapbox-gl'
 import {bbox, bboxPolygon} from '@turf/turf'
+import LayerSelector from "./LayerSelector"
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWNhbm5pc3RyYSIsImEiOiJLWVM2RWhJIn0.TputXxRYBUPh-vjDg6_TFA';
 
 const gageDataUrl = "https://files.t11a.me/file/t11a-xyz/gages_WBD14-15-1557885435.geojson"
 
 const anomalies = "https://p282obduy0.execute-api.us-west-2.amazonaws.com/dev/anomalies"
+
+
+const fullBounds = new mapboxgl.LngLatBounds([-115.75,29.69],[-103.5,43.39])
 
 function getUnique(arr){
   let set = new Set();
@@ -35,15 +40,18 @@ class Map extends Component {
   finishedLoading;
 
 
+
+
   constructor(props) {
     super(props);
     this.state = {
-      activeBounds:  new mapboxgl.LngLatBounds([-115.75,29.69],[-103.5,43.39]),
+      activeBounds: fullBounds,
       updatedGages: null,
       gageDataSet: false
     };
 
     this.updateGageSource = this.updateGageSource.bind(this);
+    this.toggleLayer = this.toggleLayer.bind(this);
 
 
   }
@@ -52,6 +60,7 @@ class Map extends Component {
     if (this.state.gageDataSet){
       this.map.off('sourcedata', this.updateGageSource);
     }
+    this.map.fitBounds(this.state.activeBounds)
   }
 
   componentWillUpdate(newProps){
@@ -66,6 +75,14 @@ class Map extends Component {
     }
   }
 
+  toggleLayer(layer, visible){
+    console.log(this.map)
+    if(visible){
+      this.map.setLayoutProperty(layer, 'visibility', 'visible')
+    } else {
+      this.map.setLayoutProperty(layer, 'visibility', 'none')
+    }
+  }
 
   updateGageSource(){
    try {
@@ -82,17 +99,83 @@ class Map extends Component {
 
 
 
+
+
   componentDidMount(){
+
+    const dotsize = 20;
+
+
     var gageData = null;
 
     this.map = new mapboxgl.Map({
-      container: 'test',
+      container: 'map',
       style: 'mapbox://styles/mapbox/dark-v9',
       minZoom: 5,
-      bounds: this.state.activeBounds
+      bounds: this.state.activeBounds,
+      attributionControl: true,
+      customAttribution: ['USGS']
     });
 
+    var scale = new mapboxgl.ScaleControl({
+      maxWidth: 80,
+      unit: 'imperial'
+    });
+    this.map.addControl(scale);
 
+    scale.setUnit('imperial');
+
+
+
+    var pulsingDot = {
+      width: dotsize,
+      height: dotsize,
+      data: new Uint8Array(dotsize * dotsize * 4),
+
+      onAdd: function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = this.width;
+        canvas.height = this.height;
+        this.context = canvas.getContext('2d');
+      },
+
+      render: function(map) {
+        var duration = 1000;
+        var t = (performance.now() % duration) / duration;
+
+        var radius = dotsize / 2 * 0.3;
+        var outerRadius = dotsize / 2 * 0.7 * t + radius;
+        var context = this.context;
+
+        // draw outer circle
+        context.clearRect(0, 0, this.width, this.height);
+        context.beginPath();
+        context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(255, 200, 200,' + (1 - t) + ')';
+        context.fill();
+
+        // draw inner circle
+        context.beginPath();
+        context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(255, 100, 100, 1)';
+        context.strokeStyle = 'white';
+        context.lineWidth = 2 + 4 * (1 - t);
+        context.fill();
+        context.stroke();
+
+        // update this image's data with data from the canvas
+        this.data = context.getImageData(0, 0, this.width, this.height).data;
+
+        // keep the map repainting
+        console.log(this)
+        // this.map.triggerRepaint();
+
+        // return `true` to let the map know that the image was updated
+        return true;
+      }
+    };
+
+    this.map.addImage('pulsingDot', pulsingDot);
 
     this.map.on("load", () => {
 
@@ -187,14 +270,13 @@ class Map extends Component {
     console.log('rendering...')
 
     return (
-      <div  style={{
-         position: 'absolute',
-         top: 0,
-         bottom: 0,
-         left: '40%',
-         width: '60%',
-         height: '100%',
-         }} id = 'test'>
+      <div>
+        <LayerSelector toggleLayer={this.toggleLayer}>
+        </LayerSelector>
+        <div
+         style={{
+          "height" : "100vh"
+        }} id = 'map'/>
       </div>
     );
   }
