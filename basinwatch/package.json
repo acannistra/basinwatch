@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "7.4.3",
+    "@material-ui/core": "^4.0.0-rc.0",
     "@turf/bbox": "^6.0.1",
     "@turf/turf": "^5.1.6",
     "chalk": "^2.4.2",
@@ -85,6 +86,7 @@
     "prop-types": "15.7.2",
     "react": "16.8.6",
     "react-dom": "16.8.6",
+    "react-gauge-chart": "^0.1.7",
     "react-helmet": "6.0.0-beta",
     "react-intl": "2.8.0",
     "react-redux": "7.0.2",
@@ -98,7 +100,8 @@
     "styled-components": "4.2.0",
     "vega": "^5.4.0",
     "vega-embed": "^4.2.0",
-    "vega-lite": "^3.2.1"
+    "vega-lite": "^3.2.1",
+    "victory": "^32.2.3"
   },
   "devDependencies": {
     "@babel/cli": "7.4.3",

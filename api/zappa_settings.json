@@ -6,6 +6,6 @@
         "project_name": "api",
         "runtime": "python3.6",
         "s3_bucket": "basinwatch-api",
-	      "slim_handler" : true
+        "slim_handler": true
     }
 }

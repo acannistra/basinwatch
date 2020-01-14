@@ -32,20 +32,55 @@ function getUnique(arr){
 
 class Map extends Component {
   watershedClickHandler;
-  reset;
+  finishedLoading;
 
 
   constructor(props) {
     super(props);
     this.state = {
       activeBounds:  new mapboxgl.LngLatBounds([-115.75,29.69],[-103.5,43.39]),
-      updatedGages: null
+      updatedGages: null,
+      gageDataSet: false
     };
+
+    this.updateGageSource = this.updateGageSource.bind(this);
+
+
   }
 
-  componentDidUpdate(){
-
+  componentDidUpdate(prevProps, prevState){
+    if (this.state.gageDataSet){
+      this.map.off('sourcedata', this.updateGageSource);
+    }
   }
+
+  componentWillUpdate(newProps){
+    console.log(newProps)
+
+    if(newProps.focalWatershed){
+      var feats = this.map.querySourceFeatures('wbd-Source', {
+        filter: ['==', 'HUC6', newProps.focalWatershed.HUC6]
+      });
+      // this.map.fitBounds(bbox(feats[0].geometry))
+      // return(false)
+    }
+  }
+
+
+  updateGageSource(){
+   try {
+     this.map.getSource('gages').setData(this.state.updatedGages);
+     this.setState({
+       gageDataSet: true
+     });
+     console.log('update success')
+   }
+   catch (error){
+     console.log(error);
+   };
+ }
+
+
 
   componentDidMount(){
     var gageData = null;
@@ -89,9 +124,11 @@ class Map extends Component {
           })
     })
 
-    this.map.on('sourcedata', (e) => {
-      this.map.getSource('gages').setData(this.state.updatedGages)
-    })
+
+
+    this.map.on('sourcedata', this.updateGageSource);
+
+
 
     var hoveredStateId = null;
 

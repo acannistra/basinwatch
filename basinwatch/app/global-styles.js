@@ -13,7 +13,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body.fontLoaded {
-    @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700|IBM+Plex+Serif:400,400i&display=swap');
+    @import url("https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700|IBM+Plex+Serif:400,400i&display=swap");
     font-family: 'IBM Plex Serif', serif;
     font-family: 'IBM Plex Sans', sans-serif;
   }
